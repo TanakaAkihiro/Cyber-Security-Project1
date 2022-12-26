@@ -16,6 +16,9 @@ def addView(request):
 
 #@login_required
 def homePageView(request):
+	if request.session['user'] is None:
+		return redirect('/counting/login')
+		
 	accounts = Account.objects.filter(owner=request.session.get('user'))
 	return render(request, 'counting/index.html', dict(accounts=accounts))
 
@@ -31,7 +34,9 @@ def loginActionView(request):
 	password = request.POST.get('password')
 	user = User.objects.filter(username=username, password=password).first()
 	
+	if user is None:
+		return redirect('/counting/login')
+
 	request.session['user'] = str(user.id)
 	if user:
 		return redirect('/counting')
-	return HttpResponse('moi')
