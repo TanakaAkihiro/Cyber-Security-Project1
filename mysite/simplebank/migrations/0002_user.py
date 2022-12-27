@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('counting', '0001_initial'),
+        ('simplebank', '0001_initial'),
     ]
 
     operations = [

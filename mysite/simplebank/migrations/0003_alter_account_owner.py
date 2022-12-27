@@ -7,13 +7,13 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('counting', '0002_user'),
+        ('simplebank', '0002_user'),
     ]
 
     operations = [
         migrations.AlterField(
             model_name='account',
             name='owner',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='counting.user'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='simplebank.user'),
         ),
     ]

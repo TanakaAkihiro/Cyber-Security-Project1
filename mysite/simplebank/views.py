@@ -18,19 +18,19 @@ def addView(request):
 def homePageView(request):
 	try:
 		if request.session['user'] is None:
-			return redirect('/counting/login')
+			return redirect('/simplebank/login')
 	except KeyError:
-		return redirect('/counting/login')
+		return redirect('/simplebank/login')
 
 	accounts = Account.objects.filter(owner=request.session.get('user'))
-	return render(request, 'counting/index.html', dict(accounts=accounts))
+	return render(request, 'simplebank/index.html', dict(accounts=accounts))
 
 def loginView(request):
-	return render(request, 'counting/login.html')
+	return render(request, 'simplebank/login.html')
 
 def logoutView(request):
 	request.session['user'] = None
-	return redirect('/counting/login')
+	return redirect('/simplebank/login')
 
 def loginActionView(request):
 	username = request.POST.get('username')
@@ -38,8 +38,8 @@ def loginActionView(request):
 	user = User.objects.filter(username=username, password=password).first()
 	
 	if user is None:
-		return redirect('/counting/login')
+		return redirect('/simplebank/login')
 
 	request.session['user'] = str(user.id)
 	if user:
-		return redirect('/counting')
+		return redirect('/simplebank')
