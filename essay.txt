@@ -1,2 +1,4 @@
 LINK: https://github.com/TanakaAkihiro/Cyber-Security-Project1
+Quick installation instructions: After cloning the repository, go to directory "mysite" and run commands "python3 manage.py makemigrations", "python3 manage.py migrate" and "python3 init_database.py"
+
 
