@@ -11,6 +11,12 @@ Exact source link:
 https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/templates/simplebank/index.html#L18
 https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/templates/simplebank/index.html#L37
 https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/templates/simplebank/login.html#L3
+https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/views.py#L12
+https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/views.py#L20
+https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/views.py#L31
+https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/views.py#L35
+https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/views.py#L40
+
 
 Description of flaw 1:
 
@@ -18,7 +24,7 @@ Currently CSRF tokens are commented out, which means that POST requests are not 
 
 Fix to flaw 1:
 
-Add {% csrf_token %} template tag into every form of html files.
+Add {% csrf_token %} template tag into every form of html files and remove @csrf_exempt decorator from the views.py file.
 
 
 FLAW 2: A1 (2017) Injection
