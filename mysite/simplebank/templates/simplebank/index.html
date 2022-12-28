@@ -15,7 +15,7 @@
 
 
         <form action='logout/' method="POST">
-			{% csrf_token %}
+			<!--{% csrf_token %}-->
             <input type="submit" value="Logout"/>
         </form>
 		
@@ -34,7 +34,7 @@
         <h2>Create a new account</h2>
 
         <form action='add/' method="POST">
-            {% csrf_token %}
+            <!--{% csrf_token %}-->
 
 			<input type="text" name="iban"/><br/>
             <input type="submit" value="Send"/>

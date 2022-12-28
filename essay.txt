@@ -1,4 +1,27 @@
 LINK: https://github.com/TanakaAkihiro/Cyber-Security-Project1
 Quick installation instructions: After cloning the repository, go to directory "mysite" and run commands "python3 manage.py makemigrations", "python3 manage.py migrate" and "python3 init_database.py"
+More installation details in README file in the repository.
 
+OWASP top ten list (2017)
+
+FLAW 1: CSRF token
+
+Exact source link:
+
+https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/templates/simplebank/index.html#L18
+https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/templates/simplebank/index.html#L37
+https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/templates/simplebank/login.html#L3
+
+Description of flaw 1:
+
+Currently CSRF tokens are commented out, which means that POST requests are not checked wether they are from malicious attackers or from innocent users.
+
+Fix to flaw 1:
+
+Add {% csrf_token %} template tag into every form of html files.
+
+
+FLAW 2: A1 (2017) Injection
+
+Source link:
 
