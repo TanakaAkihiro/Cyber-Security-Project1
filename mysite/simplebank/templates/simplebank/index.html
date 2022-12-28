@@ -24,7 +24,8 @@
 		<ul>
 		{% for a in accounts %}
 
-		<li>{{a.iban}}
+		<li>{{a}}
+        <!-- Fix to flaw 2: <li>{{a.iban}} instead of the previous line-->
 		</li>
 
 		{% endfor %}

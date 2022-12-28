@@ -3,6 +3,8 @@ from django.http import HttpResponse
 #from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 #from django.contrib.auth.models import User
+from django.db import connection
+
 from .models import Account, User
 from django.db.models import Q
 import json
@@ -24,8 +26,20 @@ def homePageView(request):
 			return redirect('/simplebank/login')
 	except KeyError:
 		return redirect('/simplebank/login')
+	user_id = request.session['user']
 
-	accounts = Account.objects.filter(owner=request.session.get('user'))
+	query = 'SELECT iban FROM simplebank_account a JOIN simplebank_user u ON a.owner_id = u.id WHERE u.id = ' + user_id
+	with connection.cursor() as cursor:
+		cursor.execute(query)
+		rows = cursor.fetchall()
+
+	accounts = []
+	for r in rows:
+		accounts.append(r[0])
+
+	# Fix for flaw 2: instead of lines 31 - 38, use the code below
+	# accounts = Account.objects.filter(owner=request.session.get('user'))
+	
 	return render(request, 'simplebank/index.html', dict(accounts=accounts))
 
 @csrf_exempt
