@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 #from django.contrib.auth.models import User
 from django.db import connection
+#from django.core.signing import loads
 
 from .models import Account, User
 from django.db.models import Q
@@ -56,6 +57,7 @@ def loginActionView(request):
 	username = request.POST.get('username')
 	password = request.POST.get('password')
 	user = User.objects.filter(username=username, password=password).first()
+	#user = User.objects.filter(username=username, password=loads(password)).first()
 	
 	if user is None:
 		return redirect('/simplebank/login')
