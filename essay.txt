@@ -9,17 +9,19 @@ FLAW 1: CSRF token
 Exact source link:
 
 https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/templates/simplebank/index.html#L18
-https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/templates/simplebank/index.html#L37
+https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/templates/simplebank/index.html#L38
 https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/templates/simplebank/login.html#L3
+https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/views.py#L1
 https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/views.py#L12
-https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/views.py#L20
-https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/views.py#L31
-https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/views.py#L35
-https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/views.py#L40
+https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/views.py#L19
+https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/views.py#L42
+https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/views.py#L46
+https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/views.py#L51
 
 Description of flaw 1:
 
-Currently CSRF tokens are commented out, which means that POST requests are not checked wether they are from malicious attackers or from innocent users.
+Currently CSRF tokens are commented out, which means that POST requests are not been checked wether they are from malicious attackers or from innocent users. CSRF tokens are used for responding only legitimate requests and block malicious requests.
+ By default, Django checks if POST requests from users, have CSRF token with them and it raises an error, if a request does not have one or it does not match with the server's one. In order to recreate the flaw, the default check for CSRF token is set to off by a decorator `@csrf_exempt`.
 
 Fix to flaw 1:
 
@@ -30,15 +32,16 @@ FLAW 2: A1 (2017) Injection
 
 Source link:
 
-https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/views.py#L29-L38
+https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/views.py#L26-L35
 
 Description of flaw 2:
 
-Currently bank accounts of the user that are listed on the home page are fetched by a SQL query. The implementation is vulnerable to SQL injection attacks, since the attacker could modify the SQL query so that the attacker could gain unauthorized access to the database or to manipulate data. For example, if the attacker sets the value of request.session['user'] to `1 OR 1=1`, the attacker gets all the iban strings from the Account table.
+Currently bank accounts of the user that are listed on the home page are fetched by a SQL query. The implementation is vulnerable to SQL injection attacks, since the attacker could modify the SQL query, so that the attacker could gain unauthorized access to the database or to manipulate data.
+ For example, if the attacker sets the value of `request.session['user']` to `1 OR 1=1`, the attacker gets all the iban strings from the Account table.
 
 Fix to flaw 2:
 
-Instead of using raw SQL query, we could fetch accounts by using django's built in function filter(), which is commented out here: https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/views.py#L41
+Instead of using raw SQL query, we could fetch accounts by using built in function filter() of Django, which is commented out here: https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/views.py#L41
 
 
 FLAW 3: A2 (2017) Broken Authentication
@@ -52,32 +55,46 @@ Description of flaw 3:
 Currently new users can be created in the python shell (python3 manage.py shell) by importing the model class User and run
 `user = User(username="new_user", password="new_user_password")`
 `user.save()`
-There is nothing implemented to prevent brute force or other automated attacks in the project that makes the attackers able to gain access to users' page.
-Moreover, passwords are not checked, if they are strong and unpredictable enough that could make the attacker easier to guess the password.
+ There is nothing implemented to prevent brute force or other automated attacks in the project that makes the attackers able to gain access to users' page.
+ Moreover, passwords are not been checked by the application, if they are strong and unpredictable enough. Weak and easily predictable passwords make the attacker easier and faster to guess the correct password.
+ Another issue is that session timeouts of the application are not set at all, which means that the session ID is staying forever unless the user invalidates it by clicking log out button or clearing manually the content of the user's cookie.  
 
 Fix to flaw 3:
 
 There are several ways to prevent brute force attacks. For example, we could implement a function that blocks requests from an IP address after a certain amount of tries. There are also libraries for preventing brute force attacks like `django-axes` and `django-defender`. In addition, using two-factor authentication and requiring users to use strong passwords are effective ways to prevent brute force attacks.
-
+ For checking wether the given password is strong or weak, we could create a function for that: https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/utils/strong_password.py
+ Django has a built-in session timeout setting: `SESSION_COOKIE_AGE`, which can be configured in the settings file: https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/config/settings.py#L129
 
 FLAW 4: A3 (2017) Sensitive Data Exposure
 
 Description of flaw 4:
 
 Currently all the passwords of users are stored as plain text in the database. This is extremely unsafe, since if attackers get access to the database, they could get easily Sensitive data from the database. One notable point is that some type of sensitive data are required by law to protect them by storing them in encrypted format. For example, Payment Card Industry Data Security Standard requires credit cards to be encrypted always.
+ Hashing automatically new passwords into the database makes the application more secure.
 
 Fix to flaw 4:
 
-The easiest fix for this is to use django's built-in User model `django.contrib.auth.User` that is using PBKDF2 algorithm to store passwords by default and has possibility to check passwords stored with PBKDF2SHA1, argon2 and bcrypt.
-Another way to fix this issue is to encrypt passwords by using `django.core.signing` module. New user could be created with encrypted password:
+The easiest fix for this is to use Django's built-in User model `django.contrib.auth.models.User` that is using PBKDF2 algorithm to store passwords by default and has possibility to check passwords stored with PBKDF2SHA1, argon2 and bcrypt.
+ Another way to fix this issue is to encrypt passwords by using `django.core.signing` module. New user could be created with encrypted password:
+
 `from django.core.signing import dumps`
 `user = User(username="new_user", password=dumps("new_user_password"))`
 `user.save()`
 
-and decrypted when handling login action: https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/views.py#L7, https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/views.py#L60
+and decrypted when handling login action: https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/views.py#L7, https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/simplebank/views.py#L56-L57
+ Hashing automatically new passwords can be implemented by using custom form field and create a method that hashes specific fields. This fix is not needed, when using Django's built-in User model, since it automatically hashes passwords.
 
 
 FLAW 5: A7 (2017) Cross-Site Scripting (XSS)
 
+Source link:
+
+https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/config/settings.py#L68
+
 Description of flaw 5:
 
+Currently user inputs are not being validated that makes the attackers to write malicious JavaScript code into inputs. The script could be used to get information of the sessions of the users. To get the content of the cookie, the attacker could use a following script: `<script>alert(document.cookie);</script>`
+
+Fix to flaw 5:
+
+Django validates all the user inputs by default and currently this default setting is set to off mode in the settings.py file. The issue is easily solved by removing the line https://github.com/TanakaAkihiro/Cyber-Security-Project1/blob/main/mysite/config/settings.py#L68
