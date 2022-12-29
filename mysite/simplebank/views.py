@@ -7,11 +7,8 @@ from django.db import connection
 # from django.core.signing import loads
 
 from .models import Account, User
-from django.db.models import Q
-import json
 
 
-#@login_required
 @csrf_exempt
 def addView(request):
 	user = User.objects.get(pk=request.session['user'])
@@ -19,7 +16,6 @@ def addView(request):
 	new = Account.objects.create(owner = user, iban = iban)
 	return redirect('/')
 
-#@login_required
 @csrf_exempt
 def homePageView(request):
 	try:
