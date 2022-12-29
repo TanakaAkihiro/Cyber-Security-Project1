@@ -64,6 +64,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            # Fix for flaw 5: remove the line below
+            'autoescape': False
         },
     },
 ]
@@ -122,3 +124,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Fix for flaw 2
+# SESSION_COOKIE_AGE = 3600
